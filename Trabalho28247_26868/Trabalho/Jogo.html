@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>A corrida da tua vida</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        var config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            physics:{
+                default: 'arcade',
+                arcade: {
+               
+                debug: false
+            }
+        },
+        scene: {
+        preload: preload,
+        create: create,
+        update: update
+        }
+    }
+
+    var player;
+    var Carro1;
+    var cursors;
+    var barra;
+    var perdeu = false; 
+    var gameover;
+    var transito;
+    var pontuacao=0;
+    var nivel=1;
+    var carros;
+    var carro;
+
+
+    var game = new Phaser.Game(config);
+    
+    function preload(){
+        this.load.image('estrada', 'assets/estrada.png');
+        this.load.image('f1', 'assets/f2.png',{frameWidth:32, frameHeight:48});
+        this.load.image('Carro1', 'assets/Carro1.png');
+        this.load.image('Obstaculo', 'assets/Obstaculo.png');
+    }
+
+    function create (){
+
+        // Imagens do jogo
+        this.add.image(400,300, 'estrada');
+        player = this.physics.add.sprite(600,480, 'f1')
+
+        
+        barra = this.physics.add.staticGroup();
+
+        barra.create(702,300,'Obstaculo');
+        barra.create(106,300,'Obstaculo');
+
+        cursors = this.input.keyboard.createCursorKeys();
+
+        // Colisao contra as paredes
+        this.physics.add.collider(player,barra);
+
+        player.setCollideWorldBounds(true);
+
+        carros = this.physics.add.group();
+
+        // //Colisao entre carros
+        this.physics.add.collider(player,carros, acidente , null , this);
+
+         //Surgir carros
+         /*Carro1 = this.physics.add.group({
+             key: 'Carro1',
+             repeat: 2,
+             setXY:{X: 0, Y:0, stepX: 200 }
+         });*/
+
+         transito = this.time.addEvent({
+            delay: 1000 / nivel,
+            callback: cairCarros,
+            callbackScope: this,
+            loop: true
+
+         });
+    }
+    
+
+    function update (){
+        if(perdeu){
+            return;
+        }
+        if (cursors.left.isDown){
+            player.setVelocityX(-1000);
+        }        
+        else if (cursors.right.isDown){
+            player.setVelocityX(1000);
+        }else if (cursors.up.isDown ){
+            player.setVelocityY(-1000);
+            player.setGravity=false;
+        }else if (cursors.down.isDown){
+            player.setVelocityY(1000);
+            player.setGravity=false;
+        }
+        else {
+            player.setVelocity(0);
+        }
+    }
+
+    cairCarros = ()=> {
+        for(var i = 0; i < nivel; i++){
+            var randomX = Phaser.Math.Between(140,680);
+
+            carro = carros.create(randomX, -50, 'Carro1');
+            carro.setGravityY(200);
+
+            
+        }
+    }
+
+    function acidente(player , cairCarros){
+        this.physics.pause();
+
+        gameover = this.add.text(300,200, 'Larga o telemovel', {fontSize: '32px', fill: '#FFA500',fontStyle:'bold'});
+
+        player.setTint(0xff0000);
+
+        perdeu = true;
+
+      
+    }
+    </script>
+
+</body>
+</html>
