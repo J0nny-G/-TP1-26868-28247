@@ -40,7 +40,6 @@ this.load.image('estrada', 'assets/estrada.png');
 this.load.image('f1', 'assets/f2.png',{frameWidth:32, frameHeight:48});
 this.load.image('Carro1', 'assets/Carro1.png');
 this.load.image('Obstaculo', 'assets/Obstaculo.png');
-this.load.image('linha', 'assets/linha.png');
 }
 
 function create (){
